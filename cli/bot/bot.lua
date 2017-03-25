@@ -9,7 +9,7 @@ db = redis.connect('127.0.0.1', 6379)
 BASE = '/root/aaapi-cliii-fortel-gram-boot/cli/bot/'
 SUDO = 250049437 --sudo id
 sudo_users = {250049437,123456789,Userid}
-BOTS = 339652856 --bot id
+BOTS = 331056379 --bot id
 bot_id = db:get(SUDO..'bot_id')
 function vardump(value)
   print(serpent.block(value, {comment=false}))
@@ -39,7 +39,7 @@ end
 end
 ------------------------------------------------------------
 function is_bot(msg)
-  if tonumber(BOTS) == 339652856 then
+  if tonumber(BOTS) == 331056379 then
     return true
     else
     return false
