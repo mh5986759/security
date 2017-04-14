@@ -1,15 +1,16 @@
 local URL = require "socket.url"
 local https = require "ssl.https"
 local serpent = require "serpent"
-local json = (loadfile "/root/aaapi-cliii-fortel-gram-boot/cli/data/JSON.lua")()
-local token = '341037361:AAFSZ6DVUuWoaJyBVqlN-QrgQ7J61FfUfno' --token
+local json = (loadfile "/home/securitybot/security/cli/data/JSON.lua")()
+local token = '352264248:AAF9blQXMr0OsHmg9dRs36LxvG5tOWUIHrY
+' --token
 local url = 'https://api.telegram.org/bot' .. token
 local offset = 0
 local redis = require('redis')
 local redis = redis.connect('127.0.0.1', 6379)
-local SUDO = 247134702
+local SUDO = 342293523
 function is_mod(chat,user)
-sudo = {247134702}
+sudo = {342293523}
   local var = false
   for v,_user in pairs(sudo) do
     if _user == user then
@@ -159,7 +160,7 @@ local function run()
           offset = msg.update_id + 1
           if msg.inline_query then
             local q = msg.inline_query
-						if q.from.id == 331056379 or q.from.id == 247134702 then
+						if q.from.id == 290665873 or q.from.id == 342293523 then
             if q.query:match('%d+') then
               local chat = '-'..q.query:match('%d+')
 							local function is_lock(chat,value)
@@ -189,7 +190,7 @@ local hash = SUDO..'settings:'..chat..':'..value
 						local chat = ('-'..q.data:match('(%d+)') or '')
 						if is_mod(chat,q.from.id) then
              if q.data:match('_') and not (q.data:match('next_page') or q.data:match('left_page')) then
-                Canswer(q.id,">برای مشاهده راهنمای بیشتر این بخش عبارت\n/help\nرا ارسال کنید\n>تیم پشتیبانی:[@MohammadNBGBOT]\n>کانال پشتیبانی:[@EsetGroupSecurity]\n>کانال فروش:[@Nvmee]",true)
+                Canswer(q.id,">برای مشاهده راهنمای بیشتر این بخش عبارت\n/help\nرا ارسال کنید\n>تیم پشتیبانی:[@MohammadHasanMRad]\n>کانال پشتیبانی:[@RobotZedSpamTeam]\n>کانال فروش:[@RobotZedSpamTeam]",true)
 					elseif q.data:match('lock') then
 							local lock = q.data:match('lock (.*)')
 							TIME_MAX = (redis:get(SUDO..'floodtime'..chat) or 3)
@@ -326,7 +327,7 @@ local hash = SUDO..'settings:'..chat..':'..value
                    {text = 'بازگشت به منوی اصلی ◀️', callback_data = 'firstmenu:'..chat},{text = 'صفحه قبلی ◀️', callback_data = 'supportbot:'..chat}
 				}
 							}
-              edit(q.inline_message_id,'`به بخش ارتباط با بخش فنی خوش آمدید.`\n`در صورت وجود مشکل در ربات به ما پیغام ارسال کنید:`\n[ارسال پیغام](https://telegram.me/MohammadnbgBOT)',keyboard)
+              edit(q.inline_message_id,'`به بخش ارتباط با بخش فنی خوش آمدید.`\n`در صورت وجود مشکل در ربات به ما پیغام ارسال کنید:`\n[ارسال پیغام](https://telegram.me/NovinTeamContactBot)',keyboard)
             end
 							------------------------------------------------------------------------
 							if q.data:match('reportproblem') then
@@ -337,7 +338,7 @@ local hash = SUDO..'settings:'..chat..':'..value
                    {text = 'بازگشت به منوی اصلی ◀️', callback_data = 'firstmenu:'..chat},{text = 'صفحه قبلی ◀️', callback_data = 'supportbot:'..chat}
 				}
 							}
-              edit(q.inline_message_id,'`به بخش گزارش مشکل خوش آمدید.`\n`در صورت وجود مشکل در کارکرد سرویس شما به ما اطلاع دهید:`\n[گزارش مشکل](https://telegram.me/MohammadNBGbot)',keyboard)
+              edit(q.inline_message_id,'`به بخش گزارش مشکل خوش آمدید.`\n`در صورت وجود مشکل در کارکرد سرویس شما به ما اطلاع دهید:`\n[گزارش مشکل](https://telegram.me/NovinTeamContactBot)',keyboard)
             end
 							------------------------------------------------------------------------
 							if q.data:match('fahedsale') then
@@ -387,7 +388,7 @@ local hash = SUDO..'settings:'..chat..':'..value
                    {text = 'بازگشت به منوی اصلی ◀️', callback_data = 'firstmenu:'..chat},{text = 'صفحه قبلی ◀️', callback_data = 'supportbot:'..chat}
 				}
 							}
-              edit(q.inline_message_id,'`به بخش انتقادات و پیشنهادات خوش آمدید.`\n`هرگونه انتقاد،پیشنهاد را با در میان بگذارید:`\n[ارسال انتقاد،پیشنهاد](https://telegram.me/MohammadNBGbot)',keyboard)
+              edit(q.inline_message_id,'`به بخش انتقادات و پیشنهادات خوش آمدید.`\n`هرگونه انتقاد،پیشنهاد را با در میان بگذارید:`\n[ارسال انتقاد،پیشنهاد](https://telegram.me/NovinTeamContactBot)',keyboard)
             end
 							------------------------------------------------------------------------
 							if q.data:match('soalatmotadavel') then
