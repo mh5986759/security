@@ -1,15 +1,15 @@
-bot = dofile('/root/aaapi-cliii-fortel-gram-boot/cli/data/utils.lua')
-json = dofile('/root/aaapi-cliii-fortel-gram-boot/cli/data/JSON.lua')
+bot = dofile('/home/securitybot/security/cli/data/utils.lua')
+json = dofile('/home/securitybot/security/cli/data/JSON.lua')
 URL = require "socket.url"
 serpent = require("serpent")
 http = require "socket.http"
 https = require "ssl.https"
 redis = require('redis')
 db = redis.connect('127.0.0.1', 6379)
-BASE = '/root/aaapi-cliii-fortel-gram-boot/cli/bot/'
-SUDO = 247134702 --sudo id
-sudo_users = {247134702,Userid}
-BOTS = 331056379 --bot id
+BASE = '/home/securitybot/security/cli/bot/'
+SUDO = 342293523 --sudo id
+sudo_users = {342293523,Userid}
+BOTS = 290665873 --bot id
 bot_id = db:get(SUDO..'bot_id')
 function vardump(value)
   print(serpent.block(value, {comment=false}))
@@ -39,7 +39,7 @@ end
 end
 ------------------------------------------------------------
 function is_bot(msg)
-  if tonumber(BOTS) == 331056379 then
+  if tonumber(BOTS) == 290665873 then
     return true
     else
     return false
@@ -875,7 +875,7 @@ end
             end
           tdcli_function({
       ID = "GetInlineQueryResults",
-      bot_user_id_ = 341037361,
+      bot_user_id_ = 352264248,
       chat_id_ = msg.chat_id_,
       user_location_ = {
         ID = "Location",
