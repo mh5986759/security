@@ -2,8 +2,7 @@ local URL = require "socket.url"
 local https = require "ssl.https"
 local serpent = require "serpent"
 local json = (loadfile "/home/securitybot/security/cli/data/JSON.lua")()
-local token = '352264248:AAF9blQXMr0OsHmg9dRs36LxvG5tOWUIHrY
-' --token
+local token = '352264248:AAF9blQXMr0OsHmg9dRs36LxvG5tOWUIHrY' --token
 local url = 'https://api.telegram.org/bot' .. token
 local offset = 0
 local redis = require('redis')
