@@ -1,16 +1,18 @@
-bot = dofile('/home/securitybot/security/cli/data/utils.lua')
-json = dofile('/home/securitybot/security/cli/data/JSON.lua')
+bot = dofile('/root/security/cli/data/utils.lua')
+json = dofile('/home/security/cli/data/JSON.lua')
 URL = require "socket.url"
 serpent = require("serpent")
 http = require "socket.http"
 https = require "ssl.https"
 redis = require('redis')
 db = redis.connect('127.0.0.1', 6379)
-BASE = '/home/securitybot/security/cli/bot/'
+BASE = '/root/security/cli/bot/'
+day = 86400
 SUDO = 342293523 --sudo id
 sudo_users = {342293523,123456789,Userid}
-BOTS = 290665873 --bot id
-bot_id = db:get(SUDO..'bot_id')
+admins = {342293523,Userid}
+BOTS = 123456789 --bot id
+bot_id = 123456789
 function vardump(value)
   print(serpent.block(value, {comment=false}))
 end
@@ -28,6 +30,15 @@ end
   end
   return var
 end
+ function is_admin(msg)
+  local var = false
+  for k,v in pairs(admins) do
+    if msg.sender_user_id_ == v then
+      var = true
+    end
+  end
+  return var
+end
 ------------------------------------------------------------
 function is_master(msg) 
   local hash = db:sismember(SUDO..'masters:'..msg.sender_user_id_)
@@ -39,7 +50,7 @@ end
 end
 ------------------------------------------------------------
 function is_bot(msg)
-  if tonumber(BOTS) == 290665873 then
+  if tonumber(BOTS) == 123456789 then
     return true
     else
     return false
@@ -116,6 +127,38 @@ function priv(chat,user)
     return false
     end
   end
+  	 -----------------------------------------------------------------------------------------------
+function getInputFile(file)
+local input = tostring(file)
+  if file:match('/') then
+    infile = {ID = "InputFileLocal", path_ = file}
+  elseif file:match('^%d+$') then
+    infile = {ID = "InputFileId", id_ = file}
+  else
+    infile = {ID = "InputFilePersistentId", persistent_id_ = file}
+  end
+
+  return infile
+end
+	-----------------------------------------------------------------------------------------------
+function sendPhoto(chat_id, reply_to_message_id, disable_notification, from_background, reply_markup, photo, caption)
+  tdcli_function ({
+    ID = "SendMessage",
+    chat_id_ = chat_id,
+    reply_to_message_id_ = reply_to_message_id,
+    disable_notification_ = disable_notification,
+    from_background_ = from_background,
+    reply_markup_ = reply_markup,
+    input_message_content_ = {
+      ID = "InputMessagePhoto",
+      photo_ = getInputFile(photo),
+      added_sticker_file_ids_ = {},
+      width_ = 0,
+      height_ = 0,
+      caption_ = caption
+    },
+  }, dl_cb, nil)
+end
   ------------------------------------------------------------
 function kick(msg,chat,user)
   if tonumber(user) == tonumber(bot_id) then
@@ -624,7 +667,24 @@ end
       if is_sudo(msg) then
         if text == 'leave' then
             bot.changeChatMemberStatus(msg.chat_id_, bot_id, "Left")
+			bot.sendMessage(msg.chat_id_, msg.id_, 1, '<code>>ربات با موفقیت از گروه خارج گردید.</code>', 1, 'html')
           end
+		  -----------------------group charge---------------
+		  if text == 'charge1' then
+		  local timeplan = 2592000
+       db:setex("groupc:"..msg.chat_id_,timeplan,true)
+	 bot.sendMessage(msg.chat_id_, msg.id_, 1, '<code>>گروه با موفقیت به میزان</code> [<b>30</b>] <code>روز شارژ شد.</code>', 1, 'html')
+       end
+	   if text == 'charge2' then
+		  local timeplan = 7776000
+       db:setex("groupc:"..msg.chat_id_,timeplan,true)
+	 bot.sendMessage(msg.chat_id_, msg.id_, 1, '<code>>گروه با موفقیت به میزان</code> [<b>90</b>] <code>روز شارژ شد.</code>', 1, 'html')
+       end
+	   if text == 'charge3' then
+       db:set("groupc:"..msg.chat_id_,true)
+	 bot.sendMessage(msg.chat_id_, msg.id_, 1, '<code>>گروه با موفقیت به میزان</code> [<b>نامحدود</b>] <code>شارژ شد.</code>', 1, 'html')
+       end
+	   --------------------------------------------------
         if text == 'ownerset' then
           function prom_reply(extra, result, success)
         db:sadd(SUDO..'owners:'..msg.chat_id_,result.sender_user_id_)
@@ -662,7 +722,7 @@ end
           bot.sendMessage(msg.chat_id_, msg.id_, 1,'<code>>به لیست ادمین های ربات افزوده گردید.</code>', 1, 'html')
         end
       --------------------------master--------------------------
-	   if text == 'masterset' then
+	   --[[if text == 'masterset' then
           function prom_reply(extra, result, success)
         db:sadd(SUDO..'masters:'..result.sender_user_id_)
         local master = result.sender_user_id_
@@ -672,7 +732,6 @@ end
         else
            bot.getMessage(msg.chat_id_, tonumber(msg.reply_to_message_id_),prom_reply)
           end
-        end
         if text and text:match('^masterset (%d+)') then
           local master = text:match('masterset (%d+)')
           db:sadd(SUDO..'masters:'..master)
@@ -692,7 +751,7 @@ end
          db:srem(SUDO..'masters:'..master)
         bot.sendMessage(msg.chat_id_, msg.id_, 1, '<code>>کاربر</code> [<b>'..master..'</b>] <code>از لیست ادمین های ربات حذف گردید.</code>', 1, 'html')
       end
-        end
+	  end]]
 	  ---############################################--
 	   if text == 'reload' and is_sudo(msg) then
        dofile('bot.lua') 
@@ -725,6 +784,15 @@ end
           if text == 'remlink' then
             db:del(SUDO..'grouplink'..msg.chat_id_)
           bot.sendMessage(msg.chat_id_, msg.id_, 1,'<code>>لینک تنظیم شده با موفقیت بازنشانی گردید.</code>', 1, 'html')
+            end
+			if text == 'remrules' then
+            db:del(SUDO..'grouprules'..msg.chat_id_)
+          bot.sendMessage(msg.chat_id_, msg.id_, 1,'<code>>قوانین تنظیم شده گروه با موفقیت بازنشانی گردید.</code>', 1, 'html')
+            end
+			if text and text:match('^setrules (.*)') then
+            local link = text:match('setrules (.*)')
+            db:set(SUDO..'grouprules'..msg.chat_id_, link)
+          bot.sendMessage(msg.chat_id_, msg.id_, 1,'<code>>قوانین گروه بروزرسانی گردید.</code>', 1, 'html')
             end
             if text and text:match('^setname (.*)') then
             local name = text:match('^setname (.*)')
@@ -824,6 +892,23 @@ end
       end
   end
       end
+	   -------------* EXPIRE *-----------------
+    if not db:get("groupc:"..msg.chat_id_) and is_owner(msg) then
+      local sudo = tonumber(159887854)
+        bot.sendMessage(msg.chat_id_, msg.id_, 1,'شارژ گروه شما به پایان رسید.', 1, 'html')
+	   bot.changeChatMemberStatus(msg.chat_id_, 341129968, "Left")
+	   end
+	   ----------------------------------------------------------------------------------------------- 
+	if text == 'charge stats' and is_owner(msg) then
+    local ex = db:ttl("groupc:"..msg.chat_id_)
+       if ex == -1 then
+		bot.sendMessage(msg.chat_id_, msg.id_, 1,'تاریخ انقضا برای گروه شما ثبت نشده است و مدت زمان گروه شما نامحدود میباشد', 1, 'html')
+       else
+        local expire = math.floor(ex / day ) + 1
+			bot.sendMessage(msg.chat_id_, msg.id_, 1,"["..expire.."] روز تا پایان مدت زمان انتقضا گروه باقی مانده است.", 1, 'html') 
+       end
+    end
+	   --******************************************************--
 -- mods
     if is_mod(msg) then
       local function getsettings(value)
@@ -875,7 +960,7 @@ end
             end
           tdcli_function({
       ID = "GetInlineQueryResults",
-      bot_user_id_ = 352264248,
+      bot_user_id_ = 275649365,
       chat_id_ = msg.chat_id_,
       user_location_ = {
         ID = "Location",
@@ -916,6 +1001,14 @@ end
         bot.sendMessage(msg.chat_id_, msg.id_, 1, '<code>>لینک گروه به گروه:</code> \n'..link, 1, 'html')
             else
         bot.sendMessage(msg.chat_id_, msg.id_, 1, '<code>>لینک ورود به گروه تنظیم نشده است.</code>\n<code>ثبت لینک جدید با دستور</code>\n<b>/setlink</b> <i>link</i>\n<code>امکان پذیر است.</code>', 1, 'html')
+            end
+          end
+		   if text == 'rules' then
+          local rules = db:get(SUDO..'grouprules'..msg.chat_id_) 
+          if rules then
+        bot.sendMessage(msg.chat_id_, msg.id_, 1, '<code>>قوانین ابرگروه:</code> \n'..rules, 1, 'html')
+            else
+        bot.sendMessage(msg.chat_id_, msg.id_, 1, '<code>>قوانین برای گروه تنظیم نشده است.</code>', 1, 'html')
             end
           end
         if text == 'mutechat' then
@@ -1207,7 +1300,7 @@ end
         bot.sendMessage(msg.chat_id_, msg.id_, 1, '<code>شناسه-گروه</code>: {<b>'..msg.chat_id_..'</b>}', 1, 'html')
           end
             end
-			if text == 'pin' then
+			if text == 'pin' and msg.reply_to_message_id_ ~= 0 then
         local id = msg.id_
         local msgs = {[0] = id}
        pin(msg.chat_id_,msg.reply_to_message_id_,0)
@@ -1266,9 +1359,21 @@ end
       end
     if text and msg_type == 'text' and not is_muted(msg.chat_id_,msg.sender_user_id_) then
        if text == "me" then
-         local msgs = db:get(SUDO..'total:messages:'..msg.chat_id_..':'..msg.sender_user_id_)
-         bot.sendMessage(msg.chat_id_, msg.id_, 1, '<code>شناسه:</code> [<b>'..msg.sender_user_id_..'</b>]\n<code>تعداد پیام ها:</code> [<b>'..msgs..'</b>]', 1, 'html')
-      end
+	    local msgs = db:get(SUDO..'total:messages:'..msg.chat_id_..':'..msg.sender_user_id_)
+	   local function getpro(extra, result, success)
+   if result.photos_[0] then
+            sendPhoto(msg.chat_id_, msg.sender_user_id_, 0, 1, nil, result.photos_[0].sizes_[1].photo_.persistent_id_,'شناسه شما: '..msg.sender_user_id_..'\nتعداد پیام های ارسالی شما: '..msgs)
+      else
+     bot.sendMessage(msg.chat_id_, msg.id_, 1,'شناسه شما: ['..msg.sender_user_id_..']\nتعداد پیام های ارسالی شما: ['..msgs..']', 1, 'html')
+   end
+   end
+    tdcli_function ({
+    ID = "GetUserProfilePhotos",
+    user_id_ = msg.sender_user_id_,
+    offset_ = 0,
+    limit_ = 1
+  }, getpro, nil)
+	end
 end
 end
   
